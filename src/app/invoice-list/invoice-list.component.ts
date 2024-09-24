@@ -68,8 +68,4 @@ import { DateProvider } from "../core/ports/date.provider";
 export class InvoiceListComponent {
   readonly today = inject(DateProvider).now();
   readonly store = inject(InvoiceListStore);
-
-  constructor() {
-    this.store.getInvoices();
-  }
 }

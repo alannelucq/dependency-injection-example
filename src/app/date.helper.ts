@@ -9,3 +9,7 @@ export function on(format: string): Date {
 export function isAfter(firstDate: Date, secondDate: Date) {
   return dayjs(firstDate).isAfter(secondDate);
 }
+
+export function isBefore(firstDate: Date, secondDate: Date) {
+  return dayjs(firstDate).isBefore(secondDate);
+}
