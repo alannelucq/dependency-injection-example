@@ -1,5 +1,5 @@
 import { InvoiceGateway } from "../ports/invoice.gateway";
-import { Invoice } from "../../invoice-list/invoice.model";
+import { Invoice } from "../../invoice-list/models/invoice.model";
 import { Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { inject } from "@angular/core";
