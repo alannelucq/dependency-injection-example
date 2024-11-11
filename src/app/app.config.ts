@@ -1,4 +1,4 @@
-import { ApplicationConfig, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -14,7 +14,7 @@ import { on } from "./date.helper";
 registerLocaleData(localeFr, 'fr');
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({eventCoalescing: true}), provideRouter(routes),
+    provideRouter(routes),
     {provide: LOCALE_ID, useValue: 'fr'},
     InvoiceListStore,
     {provide: DateProvider, useClass: SystemDateProvider},
@@ -22,10 +22,10 @@ export const appConfig: ApplicationConfig = {
       provide: InvoiceGateway, useFactory: () => {
         const gateway = new FakeInvoiceGateway();
         gateway.invoiceById = {
-          '001': {reference: '001', dueDate: on('20/09/2024'), isPaid: false},
-          '002': {reference: '002', dueDate: on('21/09/2024'), isPaid: true},
-          '003': {reference: '003', dueDate: on('24/09/2024'), isPaid: false},
-          '004': {reference: '004', dueDate: on('27/09/2024'), isPaid: false}
+          '001': {reference: '001', dueDate: on('13/11/2024'), isPaid: false},
+          '002': {reference: '002', dueDate: on('10/11/2024'), isPaid: true},
+          '003': {reference: '003', dueDate: on('09/11/2024'), isPaid: false},
+          '004': {reference: '004', dueDate: on('27/11/2024'), isPaid: false}
         };
         return gateway;
       }

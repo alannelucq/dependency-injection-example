@@ -1,21 +1,28 @@
-import { patchState, signalStore, withComputed, withHooks, withMethods, withState } from "@ngrx/signals";
+import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 import { Invoice } from "./models/invoice.model";
-import { computed, inject } from "@angular/core";
+import { computed, inject, InjectionToken } from "@angular/core";
 import { exhaustMap, pipe, switchMap, tap } from "rxjs";
 import { rxMethod } from "@ngrx/signals/rxjs-interop";
 import { InvoiceGateway } from "../core/ports/invoice.gateway";
 import { CreateInvoice } from "./models/create-invoice.model";
 import { setFulfilled, setPending, withRequestStatus } from "../shared/features/request-status.feature";
+import { DateProvider } from "../core/ports/date.provider";
+import { isAfter } from "../date.helper";
 
-type InvoiceListState = {
+export type InvoiceListState = {
   invoices: Invoice[]
 }
 
+export const InvoiceListStateToken = new InjectionToken<InvoiceListState>('InvoiceListStateToken', {
+  factory: () => ({invoices: []})
+});
+
 export const InvoiceListStore = signalStore(
-  withState<InvoiceListState>({invoices: []}),
+  withState<InvoiceListState>(() => inject(InvoiceListStateToken)),
   withRequestStatus(),
-  withComputed(store => ({
+  withComputed((store, dateProvider = inject(DateProvider)) => ({
     unpaidInvoices: computed(() => store.invoices().filter(invoice => !invoice.isPaid)),
+    invoicesInFuture: computed(() => store.invoices().filter(({dueDate}) => isAfter(dueDate, dateProvider.now())))
   })),
   withMethods((store, invoiceGateway = inject(InvoiceGateway)) => ({
     getInvoices: rxMethod<void>(
@@ -31,13 +38,5 @@ export const InvoiceListStore = signalStore(
         tap(invoice => patchState(store, {invoices: [...store.invoices(), invoice]})),
       )
     ),
-  })),
-  withHooks(store => ({
-    onInit() {
-      store.getInvoices();
-    },
-    onDestroy() {
-      // Some code ...
-    }
   }))
 );
