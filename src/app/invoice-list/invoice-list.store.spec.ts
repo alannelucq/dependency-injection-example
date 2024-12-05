@@ -5,7 +5,6 @@ import { FakeDateProvider } from "../core/adapters/fake-date.provider";
 import { DateProvider } from "../core/ports/date.provider";
 import { on } from "../date.helper";
 import { InvoiceListState, InvoiceListStateToken, InvoiceListStore } from "./invoice-list.store";
-import { StubInvoiceBuilder } from "./models/invoice.model";
 
 describe('InvoiceListStore', () => {
   let invoiceGateway: FakeInvoiceGateway;
@@ -31,14 +30,14 @@ describe('InvoiceListStore', () => {
 
   it('should retrieve invoices', () => {
     invoiceGateway.invoiceById = {
-      '001': StubInvoiceBuilder().reference('001').build(),
-      '002': StubInvoiceBuilder().reference('002').build(),
+      '001': {reference: '001', dueDate: on('19/09/2024'), isPaid: false},
+      '002': {reference: '002', dueDate: on('20/09/2024'), isPaid: false},
     }
     const store = initStore({invoices: []});
     store.getInvoices();
     expect(store.invoices()).toEqual([
-      StubInvoiceBuilder().reference('001').build(),
-      StubInvoiceBuilder().reference('002').build()
+      {reference: '001', dueDate: on('19/09/2024'), isPaid: false},
+      {reference: '002', dueDate: on('20/09/2024'), isPaid: false}
     ]);
   });
 
@@ -46,13 +45,13 @@ describe('InvoiceListStore', () => {
     dateProvider.withToday(on('19/09/2024'));
     const store = initStore({
       invoices: [
-        StubInvoiceBuilder().reference('001').dueDate(on('19/09/2024')).build(),
-        StubInvoiceBuilder().reference('002').dueDate(on('20/09/2024')).build(),
+        {reference: '001', dueDate: on('19/09/2024'), isPaid: false},
+        {reference: '002', dueDate: on('20/09/2024'), isPaid: false},
       ]
     });
 
     expect(store.invoicesInFuture()).toEqual([
-      StubInvoiceBuilder().reference('002').dueDate(on('20/09/2024')).build()
+      {reference: '002', dueDate: on('20/09/2024'), isPaid: false},
     ]);
   });
 
